@@ -1,10 +1,11 @@
-     <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dora Dora - Video Streamer</title>
+    <title>Dora Dora - EdTech Learning App</title>
     
+    <!-- Firebase SDK Scripts -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
@@ -13,7 +14,9 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         body {
@@ -22,110 +25,1090 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
         }
 
-        .container {
+        .phone-container {
             width: 100%;
             max-width: 412px;
             height: 100vh;
-            background: #181818;
+            max-height: 860px;
+            background-color: #0f0f0f;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.9);
+            border-radius: 40px;
+        }
+
+        .phone-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            min-height: 100%;
+        }
+
+        .screen.active {
             display: flex;
+        }
+
+        /* LOGIN SCREEN */
+        .login-screen {
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            text-align: center;
+            background: linear-gradient(135deg, #0f0f0f 0%, #212121 100%);
+        }
+
+        .login-logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #ff0000;
+            font-family: serif;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            width: 100%;
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .input-group label {
+            font-size: 11px;
+            color: #aaa;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .input-group input, .input-group textarea, .input-group select {
+            width: 100%;
+            padding: 10px;
+            background: #222;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            background: #ff0000;
+            color: #fff;
+            margin-top: 10px;
+        }
+
+        /* SEARCH BAR */
+        .search-box {
+            padding: 10px 15px;
+            background: #0f0f0f;
+            position: sticky;
+            top: 57px;
+            z-index: 9;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            background: #181818;
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 20px;
+            font-size: 12px;
+            outline: none;
+        }
+
+        /* HEADERS & NAVIGATION */
+        .home-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: #0f0f0f;
+            border-bottom: 1px solid #222;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .home-logo {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff0000;
+            letter-spacing: 1px;
+        }
+
+        .home-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            background: #222;
+            border: none;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .feed-container {
+            padding: 15px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        /* COURSE CARD WITH FAVOURITE HEART */
+        .course-grid-card {
+            background: #181818;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            position: relative;
+            border: 1px solid #222;
+        }
+
+        .course-thumb-container {
+            position: relative;
+            width: 100%;
+            height: 160px;
+            cursor: pointer;
+        }
+
+        .course-grid-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .fav-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 5;
+            transition: transform 0.2s;
+        }
+        .fav-btn:active { transform: scale(1.2); }
+
+        .course-grid-info {
+            padding: 12px;
+            cursor: pointer;
+        }
+
+        .course-grid-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 3px;
+        }
+
+        .course-grid-desc {
+            font-size: 11px;
+            color: #aaa;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* SUBJECT & LECTURE CARD */
+        .subject-card {
+            background: #181818;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #333;
+            cursor: pointer;
+        }
+
+        .yt-card {
+            background: #181818;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .yt-thumb-box {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+        }
+
+        .yt-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .yt-duration {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .yt-details {
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .yt-meta h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .yt-meta p {
+            font-size: 11px;
+            color: #aaa;
+            line-height: 1.2;
+        }
+
+        /* ADMIN PANEL SCREENS */
+        .admin-screen {
+            padding: 20px;
+            background: #0f0f0f;
+            overflow-y: auto;
+        }
+
+        .admin-row {
+            background: #181818;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #333;
+        }
+
+        .back-nav-bar {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0f0f0f;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 1px solid #222;
+        }
+
+        .back-btn {
+            background: #222;
+            border: none;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .sub-page {
+            display: none;
+            flex-direction: column;
+            min-height: 100%;
+            background: #0f0f0f;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 50;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .sub-page.active {
+            display: flex;
+        }
+
+        /* VIDEO PLAYER MODAL */
+        .video-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000;
+            z-index: 1000;
+            display: none;
             flex-direction: column;
             justify-content: space-between;
-            padding: 20px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            align-items: center;
         }
-
-        .header {
-            text-align: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #333;
-        }
-
-        .header h1 {
-            color: #ff0000;
-            font-size: 20px;
-            letter-spacing: 2px;
-        }
-
-        .video-box {
+        .video-modal.active { display: flex; }
+        
+        .video-wrapper {
+            position: relative;
             width: 100%;
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
             background: #000;
-            border-radius: 12px;
-            overflow: hidden;
-            margin: 20px 0;
-            position: relative;
         }
 
-        video {
+        .video-modal video {
             width: 100%;
             height: 100%;
-            max-height: 300px;
+            max-height: 100vh;
+            background: #000;
+            border: none;
             object-fit: contain;
         }
 
-        .btn-play {
+        .player-bottom-bar {
             width: 100%;
-            padding: 15px;
-            background: #ff0000;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            background: #111;
+            z-index: 1100;
         }
 
-        .btn-play:active {
-            background: #cc0000;
+        .quality-selector {
+            background: #222;
+            color: #ff0000;
+            border: 1px solid #ff0000;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header">
-            <h1>DORA DORA STREAMER</h1>
+    <div class="phone-container">
+
+        <!-- LOGIN SCREEN -->
+        <div id="loginScreen" class="screen login-screen">
+            <div class="login-logo">DORA DORA</div>
+            <div class="login-subtitle">EdTech Learning Portal</div>
+            
+            <div class="input-group">
+                <label>Mobile Number</label>
+                <input type="text" id="loginUser" placeholder="Enter mobile number">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="loginPass" placeholder="••••••••">
+            </div>
+
+            <button class="btn-full" onclick="handleLogin()">Sign In</button>
         </div>
 
-        <div class="video-box" id="playerContainer">
-            <p style="color: #777; font-size: 14px;">Play button dabayein video chalane ke liye</p>
+        <!-- USER HOME SCREEN (COURSES) -->
+        <div id="homeScreen" class="screen">
+            <div class="home-header">
+                <div class="home-logo">DORA DORA</div>
+                <div class="home-actions">
+                    <button class="icon-btn" id="adminNavBtn" style="display:none;" onclick="switchScreen('adminScreen')">⚙️ Admin</button>
+                    <button class="icon-btn" onclick="handleLogout()">Logout</button>
+                </div>
+            </div>
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="🔍 Search courses..." oninput="filterCourses(this.value)">
+            </div>
+            <div class="feed-container">
+                <div class="section-title">My Favourites ⭐</div>
+                <div id="favCoursesContainer" style="margin-bottom: 20px;"></div>
+
+                <div class="section-title">Available Courses</div>
+                <div id="coursesGridContainer"></div>
+            </div>
         </div>
 
-        <button class="btn-play" onclick="startStream()">Play Video 🎬</button>
+        <!-- SUBJECT LIST SCREEN -->
+        <div id="subjectScreen" class="screen" style="position: relative;">
+            <div class="back-nav-bar">
+                <button class="back-btn" onclick="switchScreen('homeScreen')">‹ Courses</button>
+                <span id="navCourseTitleHeader" style="font-size:12px; font-weight:bold; color:#fff;">COURSE</span>
+                <div style="width:40px;"></div>
+            </div>
+            <div class="feed-container">
+                <div class="section-title">Subjects & Study Material</div>
+                <div id="subjectsContainer"></div>
+            </div>
+        </div>
+
+        <!-- LECTURES & NOTES SCREEN -->
+        <div id="lectureScreen" class="screen" style="position: relative;">
+            <div class="back-nav-bar">
+                <button class="back-btn" onclick="openSubjectList()">‹ Subjects</button>
+                <span id="navSubjectTitleHeader" style="font-size:12px; font-weight:bold; color:#fff;">SUBJECT</span>
+                <div style="width:40px;"></div>
+            </div>
+            <div class="feed-container">
+                <div id="classNotesSection" style="margin-bottom: 15px;"></div>
+                <div class="section-title">Video Lectures</div>
+                <div id="lecturesContainer"></div>
+            </div>
+        </div>
+
+        <!-- ADMIN PANEL HOME -->
+        <div id="adminScreen" class="screen admin-screen">
+            <div class="admin-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #222; padding-bottom:10px;">
+                <h2 style="font-size:16px; color:#ff0000;">Admin Dashboard</h2>
+                <div style="display:flex; gap:6px;">
+                    <button class="icon-btn" onclick="switchScreen('homeScreen')">Home</button>
+                    <button class="icon-btn" onclick="handleLogout()">Logout</button>
+                </div>
+            </div>
+
+            <button class="btn-full" style="margin-bottom:15px;" onclick="openAddCoursePage()">+ Add New Course</button>
+            <div class="section-title">All Courses</div>
+            <div id="adminCoursesList"></div>
+        </div>
+
+        <!-- SUB-PAGE: ADD COURSE -->
+        <div id="addCoursePage" class="sub-page">
+            <div class="back-nav-bar" style="margin:-20px -20px 20px -20px;">
+                <button class="back-btn" onclick="closeAddCoursePage()">‹ Cancel</button>
+                <span style="font-size:13px; font-weight:bold; color:#ff0000;">Add Course</span>
+                <div style="width:40px;"></div>
+            </div>
+            <div class="input-group"><label>Course Name</label><input type="text" id="newCourseName" placeholder="e.g. SSC CGL Complete Batch"></div>
+            <div class="input-group"><label>Description</label><textarea id="newCourseDesc" rows="3" placeholder="Batch overview..."></textarea></div>
+            <div class="input-group"><label>Thumbnail Image</label><input type="file" id="newCourseImgFile" accept="image/*"></div>
+            <button class="btn-full" onclick="addNewCourse()">Save Course</button>
+        </div>
+
+        <!-- SUB-PAGE: MANAGE SUBJECTS -->
+        <div id="adminSubjectsPage" class="sub-page">
+            <div class="back-nav-bar" style="margin:-20px -20px 20px -20px;">
+                <button class="back-btn" onclick="closeAdminSubjects()">‹ Back</button>
+                <span id="adminCourseTitle" style="font-size:13px; font-weight:bold; color:#ff0000;">Manage Course</span>
+                <button class="icon-btn" style="background:#8b0000; color:#fff;" onclick="deleteCurrentCourse()">Delete Course</button>
+            </div>
+            <div class="feed-container" style="padding:15px 0;">
+                <div class="input-group"><label>Add Subject (e.g. Physics, History)</label><input type="text" id="newSubjectName" placeholder="Subject name"></div>
+                <button class="btn-full" style="margin-bottom:20px;" onclick="addNewSubject()">+ Add Subject</button>
+                <div class="section-title">Course Subjects</div>
+                <div id="adminSubjectsList"></div>
+            </div>
+        </div>
+
+        <!-- SUB-PAGE: MANAGE LECTURES INSIDE A SUBJECT -->
+        <div id="adminLecturesPage" class="sub-page">
+            <div class="back-nav-bar" style="margin:-20px -20px 20px -20px;">
+                <button class="back-btn" onclick="openAdminSubjects(activeCourseKey)">‹ Back</button>
+                <span id="adminSubjectTitle" style="font-size:13px; font-weight:bold; color:#ff0000;">Subject Lectures</span>
+                <button class="icon-btn" style="background:#ff0000; color:#fff; font-weight:bold;" onclick="openAddLecturePage()">+ Add Lecture</button>
+            </div>
+            <div class="feed-container" style="padding:15px 0;">
+                <div class="input-group"><label>Daily Class Notes / PDF Link for this Subject</label><input type="text" id="subNotesLinkInput" placeholder="Paste notes link here"></div>
+                <button class="btn-full" style="margin-bottom:20px;" onclick="saveSubjectNotesLink()">Save Notes Link</button>
+                <div class="section-title">Uploaded Lectures</div>
+                <div id="adminLecturesList"></div>
+            </div>
+        </div>
+
+        <!-- SUB-PAGE: ADD / EDIT LECTURE & FILE ID OPTIONS -->
+        <div id="editLecturePage" class="sub-page">
+            <div class="back-nav-bar" style="margin:-20px -20px 20px -20px;">
+                <button class="back-btn" onclick="closeEditLecturePage()">‹ Cancel</button>
+                <span style="font-size:13px; font-weight:bold; color:#ff0000;" id="lectureFormHeading">Add Lecture</span>
+                <div style="width:40px;"></div>
+            </div>
+            <input type="hidden" id="editingLecIdx">
+            
+            <div class="input-group"><label>Lecture Title</label><input type="text" id="lecFormTitle" placeholder="e.g. Lecture 1: Number System"></div>
+            <div class="input-group"><label>Description / Topic</label><textarea id="lecFormDesc" rows="2" placeholder="Details..."></textarea></div>
+            <div class="input-group"><label>Duration</label><input type="text" id="lecFormDuration" value="45:00"></div>
+            
+            <hr style="border:0; border-top:1px solid #333; margin:15px 0;">
+            <p style="font-size:12px; color:#ff0000; margin-bottom:10px; font-weight:bold;">Telegram File ID per Quality (Streamed via Render)</p>
+            
+            <div class="input-group"><label>1080p File ID</label><input type="text" id="lecForm1080" placeholder="Paste Telegram File ID"></div>
+            <div class="input-group"><label>720p File ID</label><input type="text" id="lecForm720" placeholder="Paste Telegram File ID"></div>
+            <div class="input-group"><label>480p File ID</label><input type="text" id="lecForm480" placeholder="Paste Telegram File ID"></div>
+            <div class="input-group"><label>360p File ID</label><input type="text" id="lecForm360" placeholder="Paste Telegram File ID"></div>
+            <div class="input-group"><label>240p File ID</label><input type="text" id="lecForm240" placeholder="Paste Telegram File ID"></div>
+
+            <button class="btn-full" onclick="saveLectureData()">Save Lecture to Cloud</button>
+            <button class="btn-full" id="deleteLecBtn" style="background:#8b0000; margin-top:10px; display:none;" onclick="deleteCurrentLecture()">Delete Lecture</button>
+        </div>
+
+    </div>
+
+    <!-- VIDEO PLAYER MODAL -->
+    <div class="video-modal" id="videoModal" oncontextmenu="return false;">
+        <div class="video-wrapper" id="playerContainer"></div>
+        <div class="player-bottom-bar">
+            <div style="display:flex; align-items:center; gap:6px;">
+                <label style="font-size:11px; color:#aaa;">Quality:</label>
+                <select class="quality-selector" id="qualitySelect" onchange="switchQuality(this.value)"></select>
+            </div>
+            <button class="back-btn" style="margin-left:auto;" onclick="closePlayer()">Close ✕</button>
+        </div>
     </div>
 
     <script>
-        // आपका Render बैकएंड यूआरएल और नई Telegram File ID बिल्कुल सेट है
-        const RENDER_BASE_URL = "https://study-material-959y.onrender.com";
-        const FILE_ID = "BAACAgUAAxkBAAEDFFtqoWvOgt-Y4JKlcQqTxpJwQJzBmQAC1SEAAmEhEFXYVu5O_Oa6Xz0E";
+        const firebaseConfig = {
+            databaseURL: "https://dora-dora-2e0e6-default-rtdb.asia-southeast1.firebasedatabase.app"
+        };
 
-        function startStream() {
-            const container = document.getElementById('playerContainer');
+        firebase.initializeApp(firebaseConfig);
+        const rtdb = firebase.database();
+
+        // Render बैकएंड सर्वर URL
+        const RENDER_BASE_URL = "https://study-material-959y.onrender.com";
+
+        // नई और फ्रेश डिफ़ॉल्ट Fallback File ID
+        const FALLBACK_FILE_ID = "BAACAgUAAxkBAAEDFGlqoXJRJBCWK70tRphTzbtMkBF_iQACBCMAAt2AEVXxK8ZJgjFEPT0E";
+
+        let coursesData = {};
+        let currentUser = localStorage.getItem('doradoraUser') || null;
+        let favourites = JSON.parse(localStorage.getItem('doradoraFavs')) || [];
+        let activeCourseKey = null;
+        let activeSubjectName = null;
+        let currentLectureData = null;
+        let currentPlayerElement = null;
+
+        window.onload = function() {
+            rtdb.ref('courses').on('value', (snapshot) => {
+                coursesData = snapshot.val() || {};
+                if (currentUser) renderUserCourses();
+            });
+
+            if (currentUser) {
+                setupUserSession(currentUser);
+            } else {
+                switchScreen('loginScreen');
+            }
+
+            window.addEventListener('popstate', function() {
+                if (document.getElementById('videoModal').classList.contains('active')) {
+                    closePlayer();
+                }
+            });
+        };
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function handleLogin() {
+            const user = document.getElementById('loginUser').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+            if (!user || !pass) { alert('Enter credentials'); return; }
+            currentUser = user;
+            localStorage.setItem('doradoraUser', currentUser);
+            setupUserSession(currentUser);
+        }
+
+        function setupUserSession(user) {
+            const adminBtn = document.getElementById('adminNavBtn');
+            if (user === '1111') {
+                adminBtn.style.display = 'block';
+                renderAdminCoursesList();
+                switchScreen('adminScreen');
+            } else {
+                adminBtn.style.display = 'none';
+                renderUserCourses();
+                switchScreen('homeScreen');
+            }
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('doradoraUser');
+            switchScreen('loginScreen');
+        }
+
+        // FAVOURITES TOGGLE
+        function toggleFavourite(courseKey, event) {
+            event.stopPropagation();
+            if (favourites.includes(courseKey)) {
+                favourites = favourites.filter(k => k !== courseKey);
+            } else {
+                favourites.push(courseKey);
+            }
+            localStorage.setItem('doradoraFavs', JSON.stringify(favourites));
+            renderUserCourses();
+        }
+
+        // USER COURSES & FAVOURITES RENDER
+        function renderUserCourses(filterQuery = '') {
+            const container = document.getElementById('coursesGridContainer');
+            const favContainer = document.getElementById('favCoursesContainer');
+            container.innerHTML = '';
+            favContainer.innerHTML = '';
+
+            const keys = Object.keys(coursesData);
+            if(keys.length === 0) {
+                container.innerHTML = '<p style="color:#777; font-size:12px;">No courses available.</p>';
+                favContainer.innerHTML = '<p style="color:#777; font-size:12px;">No favourite courses.</p>';
+                return;
+            }
+
+            let favCount = 0;
+            keys.forEach(key => {
+                const course = coursesData[key];
+                if (filterQuery && !course.name.toLowerCase().includes(filterQuery.toLowerCase())) return;
+
+                const isFav = favourites.includes(key);
+                const favHeart = isFav ? '❤️' : '🤍';
+
+                const cardHtml = `
+                    <div class="course-grid-card">
+                        <button class="fav-btn" onclick="toggleFavourite('${key}', event)">${favHeart}</button>
+                        <div class="course-thumb-container" onclick="openCourseSubjects('${key}')">
+                            <img src="${course.heroImg}" class="course-grid-img" alt="${course.name}">
+                        </div>
+                        <div class="course-grid-info" onclick="openCourseSubjects('${key}')">
+                            <div class="course-grid-title">${course.name}</div>
+                            <div class="course-grid-desc">${course.desc}</div>
+                        </div>
+                    </div>
+                `;
+
+                if (isFav) {
+                    favCount++;
+                    favContainer.innerHTML += cardHtml;
+                }
+                container.innerHTML += cardHtml;
+            });
+
+            if (favCount === 0) {
+                favContainer.innerHTML = '<p style="color:#777; font-size:12px;">Click the heart (🤍) on any course to add to favourites.</p>';
+            }
+        }
+
+        function filterCourses(query) {
+            renderUserCourses(query);
+        }
+
+        // OPEN COURSE SUBJECTS
+        function openCourseSubjects(courseKey) {
+            activeCourseKey = courseKey;
+            const course = coursesData[courseKey];
+            document.getElementById('navCourseTitleHeader').innerText = course.name;
+            const container = document.getElementById('subjectsContainer');
             container.innerHTML = '';
 
-            const video = document.createElement('video');
-            video.controls = true;
-            video.autoplay = true;
-            video.playsInline = true;
-            video.setAttribute('controlsList', 'nodownload');
+            const subjects = course.subjects || {};
+            const subNames = Object.keys(subjects);
 
-            // सीधा स्ट्रीम लिंक जोड़ा गया है
-            video.src = `${RENDER_BASE_URL}/stream?file_id=${FILE_ID}`;
+            if(subNames.length === 0) {
+                container.innerHTML = '<p style="color:#777; font-size:12px;">No subjects added in this course yet.</p>';
+            } else {
+                subNames.forEach(sub => {
+                    container.innerHTML += `
+                        <div class="subject-card" onclick="openLectures('${sub}')">
+                            <span>📚 <b>${sub}</b></span>
+                            <span style="color:#aaa;">View Lectures ›</span>
+                        </div>
+                    `;
+                });
+            }
+            switchScreen('subjectScreen');
+        }
 
-            container.appendChild(video);
-            
-            video.onerror = function() {
-                alert('Video load hone mein error aaya hai. Render server ya File ID check karein.');
+        function openSubjectList() {
+            if(activeCourseKey) openCourseSubjects(activeCourseKey);
+        }
+
+        // OPEN LECTURES & NOTES
+        function openLectures(subName) {
+            activeSubjectName = subName;
+            document.getElementById('navSubjectTitleHeader').innerText = subName;
+            const notesContainer = document.getElementById('classNotesSection');
+            const lecContainer = document.getElementById('lecturesContainer');
+            notesContainer.innerHTML = '';
+            lecContainer.innerHTML = '';
+
+            const subData = coursesData[activeCourseKey].subjects[subName] || {};
+            const lectures = subData.lectures || [];
+            const notesLink = subData.notesLink || '';
+
+            if(notesLink) {
+                notesContainer.innerHTML = `
+                    <div style="background:#1a233a; padding:12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; border:1px solid #336699;">
+                        <span>📄 <b>Daily Class Notes & PDFs</b></span>
+                        <a href="${notesLink}" target="_blank" style="background:#ff0000; color:#fff; padding:6px 12px; border-radius:6px; font-size:11px; text-decoration:none; font-weight:bold;">Download Notes</a>
+                    </div>
+                `;
+            }
+
+            if(lectures.length === 0) {
+                lecContainer.innerHTML = '<p style="color:#777; font-size:12px;">No lectures available in this subject.</p>';
+            } else {
+                lectures.forEach((lec, idx) => {
+                    lecContainer.innerHTML += `
+                        <div class="yt-card" onclick="openPlayerModal(${idx})">
+                            <div class="yt-thumb-box">
+                                <img src="${lec.thumb || coursesData[activeCourseKey].heroImg}" class="yt-thumb" alt="thumb">
+                                <div class="yt-duration">${lec.duration}</div>
+                            </div>
+                            <div class="yt-details">
+                                <div class="yt-meta">
+                                    <h3>${lec.title}</h3>
+                                    <p>${lec.desc}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            switchScreen('lectureScreen');
+        }
+
+        // ADMIN COURSES
+        function renderAdminCoursesList() {
+            const container = document.getElementById('adminCoursesList');
+            container.innerHTML = '';
+            const keys = Object.keys(coursesData);
+
+            if(keys.length === 0) {
+                container.innerHTML = '<p style="color:#777; font-size:12px;">No courses found.</p>';
+                return;
+            }
+
+            keys.forEach(key => {
+                const course = coursesData[key];
+                container.innerHTML += `
+                    <div class="admin-row">
+                        <span onclick="openAdminSubjects('${key}')" style="cursor:pointer; flex:1;"><b>${course.name}</b></span>
+                        <div style="display:flex; gap:6px;">
+                            <button class="icon-btn" onclick="openAdminSubjects('${key}')">Manage</button>
+                            <button class="icon-btn" style="background:#8b0000;" onclick="deleteCourse('${key}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openAddCoursePage() { document.getElementById('addCoursePage').classList.add('active'); }
+        function closeAddCoursePage() { document.getElementById('addCoursePage').classList.remove('active'); }
+
+        function compressImage(file, callback) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function (e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function () {
+                    const canvas = document.createElement('canvas');
+                    const MAX_W = 800; const MAX_H = 450;
+                    let w = img.width; let h = img.height;
+                    if (w > h) { if (w > MAX_W) { h *= MAX_W / w; w = MAX_W; } }
+                    else { if (h > MAX_H) { w *= MAX_H / h; h = MAX_H; } }
+                    canvas.width = w; canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    callback(canvas.toDataURL('image/jpeg', 0.7));
+                };
             };
+        }
+
+        function addNewCourse() {
+            const name = document.getElementById('newCourseName').value.trim();
+            const desc = document.getElementById('newCourseDesc').value.trim();
+            const fileInput = document.getElementById('newCourseImgFile');
+            if(!name) { alert('Course name required'); return; }
+
+            function finalize(imgUrl) {
+                const ref = rtdb.ref('courses').push();
+                ref.set({
+                    name, desc: desc || 'Course description', heroImg: imgUrl,
+                    subjects: { "General Studies": { lectures: [], notesLink: "" } }
+                }, (err) => {
+                    if(!err) { closeAddCoursePage(); renderAdminCoursesList(); alert('Course saved!'); }
+                });
+            }
+
+            if(fileInput.files && fileInput.files[0]) {
+                compressImage(fileInput.files[0], finalize);
+            } else {
+                finalize("https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&q=80&w=800");
+            }
+        }
+
+        function deleteCourse(key) { if(confirm("Delete this course?")) rtdb.ref('courses/' + key).remove(); }
+        function deleteCurrentCourse() { if(activeCourseKey) { deleteCourse(activeCourseKey); closeAdminSubjects(); } }
+
+        function openAdminSubjects(courseKey) {
+            activeCourseKey = courseKey;
+            const course = coursesData[courseKey];
+            document.getElementById('adminCourseTitle').innerText = course.name;
+            renderAdminSubjectsList();
+            document.getElementById('adminSubjectsPage').classList.add('active');
+        }
+        function closeAdminSubjects() { document.getElementById('adminSubjectsPage').classList.remove('active'); }
+
+        function renderAdminSubjectsList() {
+            const container = document.getElementById('adminSubjectsList');
+            container.innerHTML = '';
+            const subs = coursesData[activeCourseKey].subjects || {};
+            Object.keys(subs).forEach(sub => {
+                container.innerHTML += `
+                    <div class="admin-row">
+                        <span style="font-weight:bold;">${sub}</span>
+                        <div style="display:flex; gap:6px;">
+                            <button class="icon-btn" onclick="openAdminLectures('${sub}')">Manage Lectures</button>
+                            <button class="icon-btn" style="background:#8b0000;" onclick="deleteSubject('${sub}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function addNewSubject() {
+            const subName = document.getElementById('newSubjectName').value.trim();
+            if(!subName) { alert('Subject name required'); return; }
+            rtdb.ref(`courses/${activeCourseKey}/subjects/${subName}`).set({ lectures: [], notesLink: "" }, (err) => {
+                if(!err) { document.getElementById('newSubjectName').value = ''; renderAdminSubjectsList(); }
+            });
+        }
+
+        function deleteSubject(subName) {
+            if(confirm(`Delete subject ${subName}?`)) {
+                rtdb.ref(`courses/${activeCourseKey}/subjects/${subName}`).remove(() => renderAdminSubjectsList());
+            }
+        }
+
+        function openAdminLectures(subName) {
+            activeSubjectName = subName;
+            document.getElementById('adminSubjectTitle').innerText = subName;
+            const subData = coursesData[activeCourseKey].subjects[subName] || {};
+            document.getElementById('subNotesLinkInput').value = subData.notesLink || '';
+            renderAdminLecturesList();
+            document.getElementById('adminLecturesPage').classList.add('active');
+        }
+
+        function saveSubjectNotesLink() {
+            const link = document.getElementById('subNotesLinkInput').value.trim();
+            rtdb.ref(`courses/${activeCourseKey}/subjects/${activeSubjectName}/notesLink`).set(link, (err) => {
+                if(!err) alert('Notes link saved successfully!');
+            });
+        }
+
+        function renderAdminLecturesList() {
+            const container = document.getElementById('adminLecturesList');
+            container.innerHTML = '';
+            const subData = coursesData[activeCourseKey].subjects[activeSubjectName] || {};
+            const lectures = subData.lectures || [];
+
+            if(lectures.length === 0) {
+                container.innerHTML = '<p style="color:#777; font-size:12px;">No lectures added yet.</p>';
+                return;
+            }
+
+            lectures.forEach((lec, idx) => {
+                container.innerHTML += `
+                    <div class="admin-row">
+                        <span style="flex:1;"><b>${lec.title}</b></span>
+                        <button class="icon-btn" onclick="openEditLecturePage(${idx})">Edit</button>
+                    </div>
+                `;
+            });
+        }
+
+        function openAddLecturePage() {
+            document.getElementById('lectureFormHeading').innerText = "Add Lecture";
+            document.getElementById('editingLecIdx').value = "";
+            document.getElementById('lecFormTitle').value = "";
+            document.getElementById('lecFormDesc').value = "";
+            document.getElementById('lecFormDuration').value = "45:00";
+            document.getElementById('lecForm1080').value = "";
+            document.getElementById('lecForm720').value = "";
+            document.getElementById('lecForm480').value = "";
+            document.getElementById('lecForm360').value = "";
+            document.getElementById('lecForm240').value = "";
+            document.getElementById('deleteLecBtn').style.display = "none";
+            document.getElementById('editLecturePage').classList.add('active');
+        }
+
+        function openEditLecturePage(idx) {
+            const lec = coursesData[activeCourseKey].subjects[activeSubjectName].lectures[idx];
+            document.getElementById('lectureFormHeading').innerText = "Edit Lecture";
+            document.getElementById('editingLecIdx').value = idx;
+            document.getElementById('lecFormTitle').value = lec.title;
+            document.getElementById('lecFormDesc').value = lec.desc || '';
+            document.getElementById('lecFormDuration').value = lec.duration || '45:00';
+            document.getElementById('lecForm1080').value = lec.v1080 || '';
+            document.getElementById('lecForm720').value = lec.v720 || '';
+            document.getElementById('lecForm480').value = lec.v480 || '';
+            document.getElementById('lecForm360').value = lec.v360 || '';
+            document.getElementById('lecForm240').value = lec.v240 || '';
+            document.getElementById('deleteLecBtn').style.display = "block";
+            document.getElementById('editLecturePage').classList.add('active');
+        }
+
+        function closeEditLecturePage() {
+            document.getElementById('editLecturePage').classList.remove('active');
+        }
+
+        function saveLectureData() {
+            const idx = document.getElementById('editingLecIdx').value;
+            const title = document.getElementById('lecFormTitle').value.trim();
+            const desc = document.getElementById('lecFormDesc').value.trim();
+            const duration = document.getElementById('lecFormDuration').value.trim();
+            
+            const v1080 = document.getElementById('lecForm1080').value.trim();
+            const v720 = document.getElementById('lecForm720').value.trim();
+            const v480 = document.getElementById('lecForm480').value.trim();
+            const v360 = document.getElementById('lecForm360').value.trim();
+            const v240 = document.getElementById('lecForm240').value.trim();
+
+            if(!title) {
+                alert('Lecture title is required.');
+                return;
+            }
+
+            const subData = coursesData[activeCourseKey].subjects[activeSubjectName];
+            let lectures = subData.lectures || [];
+
+            const lecObj = {
+                title, desc, duration, v1080, v720, v480, v360, v240,
+                thumb: coursesData[activeCourseKey].heroImg
+            };
+
+            if(idx !== "") {
+                lectures[idx] = lecObj;
+            } else {
+                lectures.push(lecObj);
+            }
+
+            rtdb.ref(`courses/${activeCourseKey}/subjects/${activeSubjectName}/lectures`).set(lectures, (err) => {
+                if(!err) {
+                    closeEditLecturePage();
+                    renderAdminLecturesList();
+                    alert('Lecture saved successfully!');
+                }
+            });
+        }
+
+        function deleteCurrentLecture() {
+            if(confirm("Delete this lecture?")) {
+                const idx = document.getElementById('editingLecIdx').value;
+                const subData = coursesData[activeCourseKey].subjects[activeSubjectName];
+                let lectures = subData.lectures || [];
+                lectures.splice(idx, 1);
+
+                rtdb.ref(`courses/${activeCourseKey}/subjects/${activeSubjectName}/lectures`).set(lectures, (err) => {
+                    if(!err) {
+                        closeEditLecturePage();
+                        renderAdminLecturesList();
+                    }
+                });
+            }
+        }
+
+        // VIDEO PLAYER (Connected with Admin File IDs & Fallback)
+        function openPlayerModal(lecIdx) {
+            const lec = coursesData[activeCourseKey].subjects[activeSubjectName].lectures[lecIdx];
+            currentLectureData = lec;
+            const container = document.getElementById('playerContainer');
+            container.innerHTML = '';
+            const qualitySelect = document.getElementById('qualitySelect');
+            qualitySelect.innerHTML = '';
+
+            let qualities = [];
+            if(lec.v1080) qualities.push({ label: '1080p (HD)', fileId: lec.v1080 });
+            if(lec.v720) qualities.push({ label: '720p', fileId: lec.v720 });
+            if(lec.v480) qualities.push({ label: '480p', fileId: lec.v480 });
+            if(lec.v360) qualities.push({ label: '360p', fileId: lec.v360 });
+            if(lec.v240) qualities.push({ label: '240p (Low)', fileId: lec.v240 });
+
+            // अगर एडमिन ने लेक्चर में File ID नहीं डाला है, तो डिफ़ॉल्ट Fallback File ID चल जाएगी
+            if(qualities.length === 0) {
+                qualities.push({ label: '480p (Default)', fileId: FALLBACK_FILE_ID });
+            }
+
+            qualities.forEach((q, idx) => {
+                qualitySelect.innerHTML += `<option value="${idx}">${q.label}</option>`;
+            });
+
+            const streamUrl = `${RENDER_BASE_URL}/stream?file_id=${qualities[0].fileId}`;
+            playVideoUrl(streamUrl, 0);
+
+            history.pushState({ playerOpen: true }, "");
+            document.getElementById('videoModal').classList.add('active');
+        }
+
+        function playVideoUrl(url, time = 0) {
+            const container = document.getElementById('playerContainer');
+            container.innerHTML = '';
+            const video = document.createElement('video');
+            video.controls = true; video.autoplay = true; video.playsInline = true;
+            video.disablePictureInPicture = true;
+            video.setAttribute('controlsList', 'nodownload noremoteplayback');
+            video.src = url;
+            if(time > 0) video.currentTime = time;
+            container.appendChild(video);
+            currentPlayerElement = video;
+        }
+
+        function switchQuality(idx) {
+            if(!currentLectureData) return;
+            let fileIds = [];
+            if(currentLectureData.v1080) fileIds.push(currentLectureData.v1080);
+            if(currentLectureData.v720) fileIds.push(currentLectureData.v720);
+            if(currentLectureData.v480) fileIds.push(currentLectureData.v480);
+            if(currentLectureData.v360) fileIds.push(currentLectureData.v360);
+            if(currentLectureData.v240) fileIds.push(currentLectureData.v240);
+
+            let targetFileId = fileIds[idx];
+            if(!targetFileId) targetFileId = FALLBACK_FILE_ID;
+
+            if(targetFileId && currentPlayerElement) {
+                const newStreamUrl = `${RENDER_BASE_URL}/stream?file_id=${targetFileId}`;
+                playVideoUrl(newStreamUrl, currentPlayerElement.currentTime);
+            }
+        }
+
+        function closePlayer() {
+            document.getElementById('playerContainer').innerHTML = '';
+            currentPlayerElement = null;
+            document.getElementById('videoModal').classList.remove('active');
+            if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
         }
     </script>
 </body>
 </html>
-   
