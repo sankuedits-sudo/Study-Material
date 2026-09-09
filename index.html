@@ -546,7 +546,7 @@
             </div>
         </div>
 
-        <!-- SUB-PAGE: ADD LECTURE -->
+        <!-- SUB-PAGE: ADD / EDIT LECTURE & FILE ID OPTIONS -->
         <div id="editLecturePage" class="sub-page">
             <div class="back-nav-bar" style="margin:-20px -20px 20px -20px;">
                 <button class="back-btn" onclick="closeEditLecturePage()">‹ Cancel</button>
@@ -558,6 +558,15 @@
             <div class="input-group"><label>Lecture Title</label><input type="text" id="lecFormTitle" placeholder="e.g. Lecture 1: Number System"></div>
             <div class="input-group"><label>Description / Topic</label><textarea id="lecFormDesc" rows="2" placeholder="Details..."></textarea></div>
             <div class="input-group"><label>Duration</label><input type="text" id="lecFormDuration" value="45:00"></div>
+            
+            <hr style="border:0; border-top:1px solid #333; margin:15px 0;">
+            <p style="font-size:12px; color:#ff0000; margin-bottom:10px; font-weight:bold;">Telegram File ID per Quality (Streamed via Render)</p>
+            
+            <div class="input-group"><label>1080p File ID</label><input type="text" id="lecForm1080" placeholder="Paste Telegram File ID"></div>
+            <div class="input-group"><label>720p File ID</label><input type="text" id="lecForm720" placeholder="Paste Telegram File ID"></div>
+            <div class="input-group"><label>480p File ID</label><input type="text" id="lecForm480" placeholder="Paste Telegram File ID"></div>
+            <div class="input-group"><label>360p File ID</label><input type="text" id="lecForm360" placeholder="Paste Telegram File ID"></div>
+            <div class="input-group"><label>240p File ID</label><input type="text" id="lecForm240" placeholder="Paste Telegram File ID"></div>
 
             <button class="btn-full" onclick="saveLectureData()">Save Lecture to Cloud</button>
             <button class="btn-full" id="deleteLecBtn" style="background:#8b0000; margin-top:10px; display:none;" onclick="deleteCurrentLecture()">Delete Lecture</button>
@@ -571,9 +580,7 @@
         <div class="player-bottom-bar">
             <div style="display:flex; align-items:center; gap:6px;">
                 <label style="font-size:11px; color:#aaa;">Quality:</label>
-                <select class="quality-selector" id="qualitySelect" onchange="switchQuality(this.value)">
-                    <option value="0">720p (HD)</option>
-                </select>
+                <select class="quality-selector" id="qualitySelect" onchange="switchQuality(this.value)"></select>
             </div>
             <button class="back-btn" style="margin-left:auto;" onclick="closePlayer()">Close ✕</button>
         </div>
@@ -590,14 +597,15 @@
         // आपका Render बैकएंड सर्वर URL
         const RENDER_BASE_URL = "https://study-material-959y.onrender.com";
 
-        // यहाँ आपकी Telegram File ID सीधी परमानेंट सेट कर दी गई है
-        const DIRECT_FILE_ID = "BAACAgUAAxkBAAEDFE9qoWBLoy48LNACyOzCLSPKOkC2mQAC7CIAAt2AEVVi3HmMTOmrJT0E";
+        // डिफ़ॉल्ट फॉールব্যাক File ID (अगर एडमिन ने लेक्चर में न डाला हो)
+        const FALLBACK_FILE_ID = "BAACAgUAAxkBAAEDFE9qoWBLoy48LNACyOzCLSPKOkC2mQAC7CIAAt2AEVVi3HmMTOmrJT0E";
 
         let coursesData = {};
         let currentUser = localStorage.getItem('doradoraUser') || null;
         let favourites = JSON.parse(localStorage.getItem('doradoraFavs')) || [];
         let activeCourseKey = null;
         let activeSubjectName = null;
+        let currentLectureData = null;
         let currentPlayerElement = null;
 
         window.onload = function() {
@@ -606,7 +614,6 @@
                 if (currentUser) renderUserCourses();
             });
 
-            // लोडिंग स्क्रीन हटाकर सीधे सेशन चेक किया जा रहा है (बिना किसी डिले के)
             if (currentUser) {
                 setupUserSession(currentUser);
             } else {
@@ -948,6 +955,11 @@
             document.getElementById('lecFormTitle').value = "";
             document.getElementById('lecFormDesc').value = "";
             document.getElementById('lecFormDuration').value = "45:00";
+            document.getElementById('lecForm1080').value = "";
+            document.getElementById('lecForm720').value = "";
+            document.getElementById('lecForm480').value = "";
+            document.getElementById('lecForm360').value = "";
+            document.getElementById('lecForm240').value = "";
             document.getElementById('deleteLecBtn').style.display = "none";
             document.getElementById('editLecturePage').classList.add('active');
         }
@@ -959,6 +971,11 @@
             document.getElementById('lecFormTitle').value = lec.title;
             document.getElementById('lecFormDesc').value = lec.desc || '';
             document.getElementById('lecFormDuration').value = lec.duration || '45:00';
+            document.getElementById('lecForm1080').value = lec.v1080 || '';
+            document.getElementById('lecForm720').value = lec.v720 || '';
+            document.getElementById('lecForm480').value = lec.v480 || '';
+            document.getElementById('lecForm360').value = lec.v360 || '';
+            document.getElementById('lecForm240').value = lec.v240 || '';
             document.getElementById('deleteLecBtn').style.display = "block";
             document.getElementById('editLecturePage').classList.add('active');
         }
@@ -973,6 +990,12 @@
             const desc = document.getElementById('lecFormDesc').value.trim();
             const duration = document.getElementById('lecFormDuration').value.trim();
             
+            const v1080 = document.getElementById('lecForm1080').value.trim();
+            const v720 = document.getElementById('lecForm720').value.trim();
+            const v480 = document.getElementById('lecForm480').value.trim();
+            const v360 = document.getElementById('lecForm360').value.trim();
+            const v240 = document.getElementById('lecForm240').value.trim();
+
             if(!title) {
                 alert('Lecture title is required.');
                 return;
@@ -982,7 +1005,7 @@
             let lectures = subData.lectures || [];
 
             const lecObj = {
-                title, desc, duration,
+                title, desc, duration, v1080, v720, v480, v360, v240,
                 thumb: coursesData[activeCourseKey].heroImg
             };
 
@@ -1017,13 +1040,32 @@
             }
         }
 
-        // DIRECT VIDEO PLAYER (Using the hardcoded File ID)
+        // VIDEO PLAYER (Connected with Admin File IDs & Fallback)
         function openPlayerModal(lecIdx) {
+            const lec = coursesData[activeCourseKey].subjects[activeSubjectName].lectures[lecIdx];
+            currentLectureData = lec;
             const container = document.getElementById('playerContainer');
             container.innerHTML = '';
+            const qualitySelect = document.getElementById('qualitySelect');
+            qualitySelect.innerHTML = '';
 
-            // सीधे Render सर्वर का स्ट्रीम लिंक और फिक्स File ID उपयोग किया जा रहा है
-            const streamUrl = `${RENDER_BASE_URL}/stream?file_id=${DIRECT_FILE_ID}`;
+            let qualities = [];
+            if(lec.v1080) qualities.push({ label: '1080p (HD)', fileId: lec.v1080 });
+            if(lec.v720) qualities.push({ label: '720p', fileId: lec.v720 });
+            if(lec.v480) qualities.push({ label: '480p', fileId: lec.v480 });
+            if(lec.v360) qualities.push({ label: '360p', fileId: lec.v360 });
+            if(lec.v240) qualities.push({ label: '240p (Low)', fileId: lec.v240 });
+
+            // अगर एडमिन ने लेक्चर में कोई File ID नहीं डाला है, तो डिफ़ॉल्ट Fallback File ID ले लेगा
+            if(qualities.length === 0) {
+                qualities.push({ label: '720p (Default)', fileId: FALLBACK_FILE_ID });
+            }
+
+            qualities.forEach((q, idx) => {
+                qualitySelect.innerHTML += `<option value="${idx}">${q.label}</option>`;
+            });
+
+            const streamUrl = `${RENDER_BASE_URL}/stream?file_id=${qualities[0].fileId}`;
             playVideoUrl(streamUrl, 0);
 
             history.pushState({ playerOpen: true }, "");
@@ -1044,9 +1086,20 @@
         }
 
         function switchQuality(idx) {
-            if(currentPlayerElement) {
-                const streamUrl = `${RENDER_BASE_URL}/stream?file_id=${DIRECT_FILE_ID}`;
-                playVideoUrl(streamUrl, currentPlayerElement.currentTime);
+            if(!currentLectureData) return;
+            let fileIds = [];
+            if(currentLectureData.v1080) fileIds.push(currentLectureData.v1080);
+            if(currentLectureData.v720) fileIds.push(currentLectureData.v720);
+            if(currentLectureData.v480) fileIds.push(currentLectureData.v480);
+            if(currentLectureData.v360) fileIds.push(currentLectureData.v360);
+            if(currentLectureData.v240) fileIds.push(currentLectureData.v240);
+
+            let targetFileId = fileIds[idx];
+            if(!targetFileId) targetFileId = FALLBACK_FILE_ID;
+
+            if(targetFileId && currentPlayerElement) {
+                const newStreamUrl = `${RENDER_BASE_URL}/stream?file_id=${targetFileId}`;
+                playVideoUrl(newStreamUrl, currentPlayerElement.currentTime);
             }
         }
 
