@@ -1,0 +1,13 @@
+{
+  "name": "dora-dora-streamer",
+  "version": "1.0.0",
+  "description": "Telegram Video Streaming Server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "express": "^4.19.2"
+  }
+}
