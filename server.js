@@ -2,7 +2,8 @@
 const axios = require('axios');
 const app = express();
 
-const BOT_TOKEN = process.env.BOT_TOKEN || 'YOUR_BOT_TOKEN_HERE';
+// यहाँ बोट टोकन सीधे सेट कर दिया गया है ताकि 500 एरर कभी न आए
+const BOT_TOKEN = '8990729601:AAFQ9lzzryZUJVFmztFpK5vICwxfiabtZBA';
 
 axios.get(`https://api.telegram.org/bot${BOT_TOKEN}/deleteWebhook`)
     .then(() => console.log('Webhook deleted successfully!'))
